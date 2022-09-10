@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.templating import Jinja2Templates
 import uvicorn
-import cv2
+import io 
 from PIL import Image
 from numpy import array
 import asyncio
@@ -43,9 +43,10 @@ async def get_stream(websocket: WebSocket):
 
             app.state.imageObject.seek(frame_count)
             await asyncio.sleep(0.1)
+            buffer = io.BytesIO()
+            app.state.imageObject.save(buffer, format='PNG')
 
-            _, buffer = cv2.imencode('.jpg', array(app.state.imageObject))
-            await websocket.send_bytes(buffer.tobytes())
+            await websocket.send_bytes(buffer.getvalue())
             frame_count += 1
 
     except WebSocketDisconnect:
