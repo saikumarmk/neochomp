@@ -1,0 +1,1 @@
+This code is intented for use on the ESP32 Firebeetle dev board, through the Arduino IDE.
