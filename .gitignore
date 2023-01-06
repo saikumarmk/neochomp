@@ -130,3 +130,7 @@ dmypy.json
 
 *.ipynb 
 pixlet
+
+*.exe
+*.webp
+*.gif
