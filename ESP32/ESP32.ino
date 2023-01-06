@@ -57,7 +57,7 @@ void setup() {
 
   xTaskNotifyGive(task_handle_wait_spi);
 
-
+  digitalWrite(1,LOW);
 }
 
 bool hasData = false;
@@ -115,7 +115,7 @@ void render(void * pvParameters)
 {
   dma_display = new MatrixPanel_I2S_DMA(mxconfig);
   dma_display->begin();
-  //dma_display->setBrightness8(100); //0-255
+  dma_display->setBrightness8(100); //0-255
   while(1)
   {
       xSemaphoreTake(xBinarySemaphore, portMAX_DELAY);
