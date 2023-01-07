@@ -1,169 +1,204 @@
-# Pixlet
-[![Docs](https://img.shields.io/badge/docs-tidbyt.dev-blue?style=flat-square)](https://tidbyt.dev)
-[![Build & test](https://img.shields.io/github/workflow/status/tidbyt/pixlet/pixlet?style=flat-square)](https://github.com/tidbyt/pixlet/actions)
-[![Discourse](https://img.shields.io/discourse/status?server=https%3A%2F%2Fdiscuss.tidbyt.com&style=flat-square)](https://discuss.tidbyt.com/)
-[![Discord Server](https://img.shields.io/discord/928484660785336380?style=flat-square)](https://discord.gg/r45MXG4kZc)
-[![GoDoc](https://godoc.org/github.com/tidbyt/pixlet/runtime?status.svg)](https://godoc.org/github.com/tidbyt/pixlet/runtime)
+<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
+<a name="readme-top"></a>
+<!--
+*** Thanks for checking out the Best-README-Template. If you have a suggestion
+*** that would make this better, please fork the repo and create a pull request
+*** or simply open an issue with the tag "enhancement".
+*** Don't forget to give the project a star!
+*** Thanks again! Now go create something AMAZING! :D
+-->
 
-Pixlet is an app runtime and UX toolkit for highly-constrained displays.
-We use Pixlet to develop applets for [Tidbyt](https://tidbyt.com/), which has
-a 64x32 RGB LED matrix display:
 
-[![Example of a Tidbyt](docs/img/tidbyt_1.png)](https://tidbyt.com)
 
-Apps developed with Pixlet can be served in a browser, rendered as WebP or
-GIF animations, or pushed to a physical Tidbyt device.
+<!-- PROJECT SHIELDS -->
+<!--
+*** I'm using markdown "reference style" links for readability.
+*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
+*** See the bottom of this document for the declaration of the reference variables
+*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
+*** https://www.markdownguide.org/basic-syntax/#reference-style-links
+-->
 
-## Documentation
 
-> Hey! We have a new docs site! Check it out at [tidbyt.dev](https://tidbyt.dev). We'll be updating this repo in the coming weeks.
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a href="https://github.com/saikumarmk/neochomp">
 
-- [Getting started](#getting-started)
-- [How it works](#how-it-works)
-- [In-depth tutorial](docs/tutorial.md)
-- [Widget reference](docs/widgets.md)
-- [Animation reference](docs/animation.md)
-- [Modules reference](docs/modules.md)
-- [Schema reference](docs/schema/schema.md)
-- [Our thoughts on authoring apps](docs/authoring_apps.md)
-- [Notes on the available fonts](docs/fonts.md)
+  </a>
 
-## Getting started
+  <h3 align="center">neochomp</h3>
 
-### Install on macOS
+  <p align="center">
+    A smart LED display powered by a single board computer.
+    <br />
+    <br />
+    <br />
+  </p>
+</div>
 
-```
-brew install tidbyt/tidbyt/pixlet
-```
 
-### Install on Linux
 
-Download the `pixlet` binary from [the latest release][1].
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#acknowledgments">Acknowledgments</a></li>
+  </ol>
+</details>
 
-Alternatively you can [build from source](docs/BUILD.md).
 
-[1]: https://github.com/tidbyt/pixlet/releases/latest
 
-### Hello, World!
+<!-- ABOUT THE PROJECT -->
+## About The Project
 
-Pixlet applets are written in a simple, Python-like language called
-Starlark. Here's the venerable Hello World program:
 
-```starlark
-load("render.star", "render")
-def main():
-    return render.Root(
-        child = render.Text("Hello, World!")
-    )
-```
+Insert future ABOUTME.
 
-Render and serve it with:
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-```console
-curl https://raw.githubusercontent.com/tidbyt/pixlet/main/examples/hello_world.star | \
-  pixlet serve /dev/stdin
-```
 
-You can view the result by navigating to [http://localhost:8080][3]:
 
-![](docs/img/tutorial_1.gif)
+### Built With
 
-[3]: http://localhost:8080
 
-## How it works
 
-Pixlet scripts are written in a simple, Python-like language called
-[Starlark](https://github.com/google/starlark-go/). The scripts can
-retrieve data over HTTP, transform it and use a collection of
-_Widgets_ to describe how the data should be presented visually.
+* Obscure C++ websockets client
+* FastAPI
+* RADXA Zero
 
-The Pixlet CLI runs these scripts and renders the result as a WebP
-or GIF animation. You can view the animation in your browser, save
-it, or even push it to a Tidbyt device with `pixlet push`.
 
-### Example: A Clock App
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-This applet accepts a `timezone` parameter and produces a two frame
-animation displaying the current time with a blinking ':' separator
-between the hour and minute components.
 
-```starlark
-load("render.star", "render")
-load("time.star", "time")
 
-def main(config):
-    timezone = config.get("timezone") or "America/New_York"
-    now = time.now().in_location(timezone)
+<!-- GETTING STARTED -->
+## Getting Started
 
-    return render.Root(
-        delay = 500,
-        child = render.Box(
-            child = render.Animation(
-                children = [
-                    render.Text(
-                        content = now.format("3:04 PM"),
-                        font = "6x13",
-                    ),
-                    render.Text(
-                        content = now.format("3 04 PM"),
-                        font = "6x13",
-                    ),
-                ],
-            ),
-        ),
-    )
-```
+This is a hardware driven project, where we used an SBC for rendering and sending frames to an ESP32.
 
-Here's the resulting image:
+### Prerequisites
 
-![](docs/img/clock.gif)
+Retrieve the Pixlet binaries from their GitHub release, then unzip and untar it. Place it in the root of this directory.
 
-### Example: A Bitcoin Tracker
+Afterwards, install the Python prerequisites.
 
-Applets can get information from external data sources. For example,
-here is a Bitcoin price tracker:
 
-![](docs/img/tutorial_4.gif)
+### Installation
 
-Read the [in-depth tutorial](docs/tutorial.md) to learn how to
-make an applet like this.
+Insert relevant installation instructions.
 
-## Push to a Tidbyt
 
-If you have a Tidbyt, `pixlet` can push apps directly to it. For example,
-to show the Bitcoin tracker on your Tidbyt:
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-```console
-# render the bitcoin example
-pixlet render examples/bitcoin.star
 
-# login to your Tidbyt account
-pixlet login
 
-# list available Tidbyt devices
-pixlet devices
+<!-- USAGE EXAMPLES -->
+## Usage
 
-# push to your favorite Tidbyt
-pixlet push <YOUR DEVICE ID> examples/bitcoin.webp
-```
+Insert usage information.
 
-To get the ID for a device, run `pixlet devices`. Alternatively, you can
-open the settings for the device in the Tidbyt app on your phone, and tap **Get API key**.
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-If all goes well, you should see the Bitcoin tracker appear on your Tidbyt:
 
-![](docs/img/tidbyt_2.jpg)
 
-## Push as an Installation
-Pushing an applet to your Tidbyt without an installation ID simply displays your applet one time. If you would like your applet to continously display as part of the rotation, add an installation ID to the push command:
+<!-- ROADMAP -->
+## Roadmap
 
-```console
-pixlet render examples/bitcoin.star
-pixlet push --installation-id <INSTALLATION ID> <YOUR DEVICE ID> examples/bitcoin.webp
-```
+- [x] Render pixlet animations and send to ESP32
+- [x] Add button based scrolling
+- [ ] Create a better controller (web view) for the device
+- [ ] Add variable timings
+- [ ] Design Pixlet apps
+    - [ ] PTV train departure apps
+    - [ ] Weather applet
 
-For example, if we set the `installationID` to "Bitcoin", it would appear in the mobile app as follows:
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-![](docs/img/mobile_1.jpg)
 
-**Note:** `pixlet render` executes your Starlark code and generates a WebP image. `pixlet push` deploys the generated WebP image to your device. You'll need to repeat this process if you want to keep the app updated. You can also create [Community Apps](https://github.com/tidbyt/community) that run on Tidbyt’s servers and update automatically.
+
+<!-- CONTRIBUTING -->
+## Contributing
+
+TBD.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+<!-- LICENSE -->
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+<!-- CONTACT -->
+## Contact
+
+Insert contacts here.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+<!-- ACKNOWLEDGMENTS -->
+## Acknowledgments
+
+Insert inspirations here.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
+[contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
+[forks-url]: https://github.com/othneildrew/Best-README-Template/network/members
+[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=for-the-badge
+[stars-url]: https://github.com/othneildrew/Best-README-Template/stargazers
+[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
+[issues-url]: https://github.com/othneildrew/Best-README-Template/issues
+[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
+[license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: https://linkedin.com/in/othneildrew
+[product-screenshot]: images/screenshot.png
+[Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
+[Next-url]: https://nextjs.org/
+[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[React-url]: https://reactjs.org/
+[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
+[Vue-url]: https://vuejs.org/
+[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
+[Angular-url]: https://angular.io/
+[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
+[Svelte-url]: https://svelte.dev/
+[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
+[Laravel-url]: https://laravel.com
+[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
+[Bootstrap-url]: https://getbootstrap.com
+[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
+[JQuery-url]: https://jquery.com 
