@@ -134,3 +134,7 @@ pixlet
 *.exe
 *.webp
 *.gif
+*.tar
+*.gz
+
+*.json

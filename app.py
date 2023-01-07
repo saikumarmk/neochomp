@@ -12,14 +12,31 @@ app.state.gif_changed = False
 app.state.pixlet_module = ''
 
 
-app.state.configstate = {"Location": "Melbourne, Australia", "Name": "Sai"}
+app.state.configstate = {"Location": "Melbourne, Australia",
+                         "Name": "Sai", 'station': 'flinders-street', 'platform': '*'}
 
 
 @app.post("/change_animation")
 async def change_animation(animation_file: str, pixlet_module: str = ''):
     app.state.current_gif = animation_file
-    
+
     app.state.pixlet_module = pixlet_module
+
+
+@app.post("/set_config")
+async def set_config(key, value):
+    app.state.configstate[key] = value
+
+
+@app.post('/set_station_platform')
+async def set_station_platform(station:str, platform: str):
+    await set_config("station",station.lower().replace(' ','-'))
+    await set_config("platform",platform)
+
+@app.post('/new_ptv_animation')
+async def new_ptv_animation(station:str, platform: str):
+    await set_station_platform(station, platform)
+    await set_pixlet_app('ptv_custom')
 
 
 async def render_pixlet():
@@ -30,8 +47,9 @@ async def render_pixlet():
     # Renders the currently set pixlet module.
 
     if (module := app.state.pixlet_module) != '':
+        schema_values = " ".join(f'{key}="{value}"' for key, value in app.state.configstate.items())
         proc = await asyncio.create_subprocess_shell(
-            f'pixlet render pixlet-apps/{module}.star -o {module}.gif --gif',
+            f'pixlet render pixlet-apps/{module}.star -o {module}.gif --gif {schema_values}',
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE)
 
